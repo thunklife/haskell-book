@@ -9,6 +9,28 @@ import System.Random (randomRIO)
 
 type WordList = [String]
 
+data Puzzle = Puzzle String [Maybe Char] String
+
+instance Show Puzzle where
+  show (Puzzle _ discovered guessed) =
+    intersperse ' ' (fmap renderGameChar discovered) ++ " Guessed so far: " ++ guessed
+
+freshPuzzle :: String -> Puzzle
+freshPuzzle word = Puzzle word nothings []
+  where nothings :: [Maybe Char] 
+        nothings = map (const Nothing) word
+
+charInWord :: Puzzle -> Char -> Bool
+charInWord (Puzzle word _ _) = (`elem` word)
+
+alreadyGuessed :: Puzzle -> Char -> Bool
+alreadyGuessed (Puzzle _ _ guessed) = (`elem` guessed)
+
+renderGameChar :: Maybe Char -> Char
+renderGameChar Nothing = '_'
+renderGameChar (Just char) = char
+
+
 allWords :: IO WordList
 allWords = lines <$> readFile "data/dict.txt"
 
