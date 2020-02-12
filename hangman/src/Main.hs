@@ -30,6 +30,14 @@ renderGameChar :: Maybe Char -> Char
 renderGameChar Nothing = '_'
 renderGameChar (Just char) = char
 
+fillInCharacter :: Puzzle -> Char -> Puzzle
+fillInCharacter (Puzzle word filledInSoFar s) c = Puzzle word newFilledInSoFar (c : s)
+  where
+    zipper :: Char -> Char -> Maybe Char -> Maybe Char 
+    zipper guessed wordChar fillChar = if wordChar == guessed then Just wordChar else fillChar
+
+    newFilledInSoFar :: [Maybe Char]
+    newFilledInSoFar = zipWith (zipper c) word filledInSoFar
 
 allWords :: IO WordList
 allWords = lines <$> readFile "data/dict.txt"
